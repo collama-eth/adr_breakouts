@@ -255,7 +255,7 @@ breakout_time_cols = [
 
 breakout_time_row = st.columns(len(breakout_time_cols))
 
-order = ["ADR", "ADR Transition", "ODR", "ODR Transition", "RDR"]
+order = ['ADR', 'ADR-ODR Transition', 'ODR', 'ODR-RDR Transition', 'RDR']
 
 for idx, col in enumerate(breakout_time_cols):
     # 1) drop any actual None/NaT values

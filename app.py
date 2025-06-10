@@ -110,7 +110,7 @@ df = df.replace(rename_map)
 
 # 1) Make sure 'date' is a datetime column
 if "date" in df.columns:
-    df["date"] = pd.to_datetime(df["session_date"])
+    df["date"] = pd.to_datetime(df["date"])
 else:
     st.sidebar.warning("No 'date' column found in your data!")
 

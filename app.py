@@ -95,8 +95,6 @@ breakout_time_cols = [col for col in df.columns if col.startswith('breakout_time
 df['date'] = pd.to_datetime(df['date']).dt.date
 df = bucket_times(df, breakout_time_cols)
 
-st.write(len(df))
-
 rename_map = {
               'adr' : 'ADR',
               'adr_transition' : 'ADR-ODR Transition',
@@ -295,33 +293,31 @@ for idx, time_col in enumerate(breakout_time_cols):
     cols[idx].plotly_chart(fig, use_container_width=True)
 
 # ── Overall # of Breakouts Distribution ────────────────────────────────────────
-dir_cols = [f'breakout_direction{i}' for i in range(1, 11)]
+dir_cols      = [f'breakout_direction{i}' for i in range(1, 7)]
 counts_per_day = df_filtered[dir_cols].notnull().sum(axis=1)
 
-# Frequency of days with exactly 0,1,…,10 breakouts
+# 2) Build a Series indexed 0..6 with counts of days
 freq = counts_per_day.value_counts().sort_index()
-# Ensure 0–6 all appear
-for i in range(11):
-    freq.setdefault(i, 0)
-freq = dict(sorted(freq.items()))
+freq = freq.reindex(range(7), fill_value=0)  # ensures 0 through 6 are present
 
-# Build DataFrame for Plotly
-df_dist = pd.DataFrame({
-    'num_breakouts': list(freq.keys()),
-    'days':          list(freq.values()),
-})
-# And percentage text if you want
-df_dist['pct'] = (df_dist['days'] / df_dist['days'].sum() * 100).map(lambda v: f"{v:.1f}%")
+# 3) Turn into a DataFrame
+df_dist = freq.rename_axis('num_breakouts').reset_index(name='days')
 
-# Plot
+# 4) Compute % text if you like
+df_dist['pct_label'] = (
+    df_dist['days'] / df_dist['days'].sum() * 100
+).map(lambda v: f"{v:.1f}%")
+
+# ── Plot with Plotly ───────────────────────────────────────────────────────────
 fig = px.bar(
     df_dist,
     x='num_breakouts',
     y='days',
-    text='days',                     # or text='pct' for percentages
+    text='pct_label',  # or 'days' if you prefer raw counts
     title='Distribution of Number of Breakouts per Day',
-    labels={'num_breakouts': '# Breakouts', 'days': 'Number of Days'}
+    labels={'num_breakouts': '# Breakouts', 'days': 'Number of Days'},
 )
+
 fig.update_traces(textposition='outside')
 fig.update_layout(
     xaxis=dict(dtick=1),
@@ -329,5 +325,4 @@ fig.update_layout(
 )
 
 st.plotly_chart(fig, use_container_width=True)
-
 st.caption(f"Sample size: {len(df_filtered):,} rows")

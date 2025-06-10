@@ -264,7 +264,7 @@ order = [
 rows = st.columns(len(breakout_time_cols))
 
 for idx, time_col in enumerate(breakout_time_cols):
-    seg_col = f"breakout_segment{idx+1}"
+    seg_col = f"Breakout {idx+1}"
     series = df_filtered[seg_col]
 
     # 1) Compute normalized counts reindexed into your exact order:

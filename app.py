@@ -27,7 +27,7 @@ def bucket_times(df: pd.DataFrame, time_cols: list) -> pd.DataFrame:
         if time(3, 0) <= t < time(8, 30):
             return 'odr'
         if time(8, 30) <= t < time(9, 30):
-            return 'rdr_transition'
+            return 'odr_transition'
         if time(9, 30) <= t < time(16, 00):
             return 'rdr'
         return None
@@ -294,6 +294,40 @@ for idx, time_col in enumerate(breakout_time_cols):
 
     cols[idx].plotly_chart(fig, use_container_width=True)
 
+# ── Overall # of Breakouts Distribution ────────────────────────────────────────
+dir_cols = [f'breakout_direction{i}' for i in range(1, 11)]
+counts_per_day = df_filtered[dir_cols].notnull().sum(axis=1)
 
+# Frequency of days with exactly 0,1,…,10 breakouts
+freq = counts_per_day.value_counts().sort_index()
+# Ensure 0–6 all appear
+for i in range(11):
+    freq.setdefault(i, 0)
+freq = dict(sorted(freq.items()))
+
+# Build DataFrame for Plotly
+df_dist = pd.DataFrame({
+    'num_breakouts': list(freq.keys()),
+    'days':          list(freq.values()),
+})
+# And percentage text if you want
+df_dist['pct'] = (df_dist['days'] / df_dist['days'].sum() * 100).map(lambda v: f"{v:.1f}%")
+
+# Plot
+fig = px.bar(
+    df_dist,
+    x='num_breakouts',
+    y='days',
+    text='days',                     # or text='pct' for percentages
+    title='Distribution of Number of Breakouts per Day',
+    labels={'num_breakouts': '# Breakouts', 'days': 'Number of Days'}
+)
+fig.update_traces(textposition='outside')
+fig.update_layout(
+    xaxis=dict(dtick=1),
+    margin=dict(l=20, r=20, t=40, b=20),
+)
+
+st.plotly_chart(fig, use_container_width=True)
 
 st.caption(f"Sample size: {len(df_filtered):,} rows")

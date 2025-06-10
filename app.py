@@ -244,7 +244,6 @@ for col, state_key in inclusion_map.items():
 #########################################################
 ### Breakout Time Distributions
 #########################################################
-import plotly.express as px
 
 breakout_time_cols = [
     "breakout_time1",
@@ -261,32 +260,29 @@ order = [
     "ODR-RDR Transition",
     "RDR"
 ]
-rows = st.columns(len(breakout_time_cols))
+cols = st.columns(len(breakout_time_cols))
 
 for idx, time_col in enumerate(breakout_time_cols):
-    seg_col = f"Breakout {idx+1}"
+    seg_col = f"breakout_segment{idx+1}"
     series = df_filtered[seg_col]
 
-    # 1) Compute normalized counts reindexed into your exact order:
+    # normalized counts in your exact order
     counts = (
         series
         .value_counts(normalize=True)
         .reindex(order, fill_value=0)
     )
-
-    # 2) Build a DataFrame for plotting:
     df_plot = counts.mul(100).reset_index()
     df_plot.columns = ['segment', 'percentage']
-    # Add a text column for labels:
     df_plot['text'] = df_plot['percentage'].map(lambda v: f"{v:.1f}%")
 
-    # 3) Call px.bar with data_frame= and column names:
+    # Use "Breakout {n}" as the title
     fig = px.bar(
         df_plot,
         x='segment',
         y='percentage',
         text='text',
-        title=seg_col,
+        title=f"Breakout {idx+1}",
         labels={'segment': '', 'percentage': ''},
     )
     fig.update_traces(textposition="outside")
@@ -296,7 +292,8 @@ for idx, time_col in enumerate(breakout_time_cols):
         yaxis=dict(showticklabels=False)
     )
 
-    rows[idx].plotly_chart(fig, use_container_width=True)
+    cols[idx].plotly_chart(fig, use_container_width=True)
+
 
 
 st.caption(f"Sample size: {len(df_filtered):,} rows")

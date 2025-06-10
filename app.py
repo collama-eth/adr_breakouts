@@ -38,8 +38,9 @@ def bucket_times(df: pd.DataFrame, time_cols: list) -> pd.DataFrame:
 
     return df
 
-def load_data_for_instrument(instrument)
+def load_data_for_instrument(instrument):
     df = pd.read_csv(f"https://raw.githubusercontent.com/TuckerArrants/adr_breakouts/refs/heads/main/{INSTRUMENT}_ADR_Breakouts_From_2008.csv")
+    return df
 
 # ✅ Store username-password pairs
 USER_CREDENTIALS = {

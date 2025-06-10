@@ -39,7 +39,7 @@ def bucket_times(df: pd.DataFrame, time_cols: list) -> pd.DataFrame:
     return df
 
 def load_data_for_instrument(instrument)
-    df = pd.read_csv(f"{INSTRUMENT}")
+    df = pd.read_csv(f"https://raw.githubusercontent.com/TuckerArrants/adr_breakouts/refs/heads/main/{INSTRUMENT}_ADR_Breakouts_From_2008.csv")
 
 # ✅ Store username-password pairs
 USER_CREDENTIALS = {
@@ -82,16 +82,17 @@ if not st.session_state["authenticated"]:
 st.title("ADR Breakouts")
 
 # ↓ in your sidebar:
-instrument_options = ["ES", "NQ", "YM", "CL", "GC", "NG", "HG", "SI", "ZN"]
+instrument_options = ["ES", "NQ", "YM", "CL", "GC"]
 selected_instrument = st.sidebar.selectbox("Instrument", instrument_options)
 
 #########################################
 ### Data Loading and Processing
 #########################################
 df = load_data_for_instrument(selected_instrument)
+breakout_time_cols = [col for col in df.columns if col.startswith('breakout_time')]
 
 df['date'] = pd.to_datetime(df['session_date']).dt.date
-
+df = bucket_times(df, breakout_time_cols)
 
 rename_map = {
               'adr' : 'ADR',
@@ -126,12 +127,6 @@ start_date, end_date = st.sidebar.date_input(
     key="date_range"
 )
 
-st.sidebar.markdown("### Daily Open Position") 
-
-
-st.sidebar.markdown("### Previous 15:55 Close Position") 
-
-
 
 #########################################
 ### Resets
@@ -139,8 +134,6 @@ st.sidebar.markdown("### Previous 15:55 Close Position")
 default_filters = {
     "selected_day":                       "All",
     "date_range":                 (min_date, max_date),
-
-
 }
 
 # 2) Reset button with callback
@@ -163,83 +156,47 @@ st.markdown("### Dropdown Filters")
 ### Session HoS / LoS Filters Inclusions
 #########################################
 
-with st.expander("Session High / Low Inclusions", expanded=False):
+sessions = ['ADR', 'ADR Transition', 'ODR', 'ODR Transition', 'RDR']
+
+with st.expander("Breakout Fitlers", expanded=True):
     row1_cols = st.columns([1, 1, 1, 1, 1, 1])
     row2_cols = st.columns([1, 1, 1, 1, 1, 1])
     
     with row1_cols[0]:
-        prev_rdr_high_filter = st.selectbox(
-            "PRDR High Touch",
-            options=["All"] + ["Daily Open-ADR Transition", "ADR", "ADR-ODR Transition", "ODR", "ODR-RDR Transition", "RDR"],
-            key="prdr_high_filter"
+        breakout1_time_filter = st.selectbox(
+            "1st Breakout Time",
+            options=["All"] + sessions,
+            key="breakout1_time_filter"
         )
     with row1_cols[1]:
-        pre_adr_high_filter = st.selectbox(
-            "Daily Open-ADR Transition High Touch",
-            options=["All"] + ["ADR", "ADR-ODR Transition", "ODR", "ODR-RDR Transition", "RDR"],
-            key="prdr_adr_transition_high_filter"
+        breakout2_time_filter = st.selectbox(
+            "2nd Breakout Time",
+            options=["All"] + sessions,
+            key="breakout2_time_filter"
         )
     with row1_cols[2]:
-        adr_high_filter = st.selectbox(
-            "ADR High Touch",
-            options=["All"] + ["ADR-ODR Transition", "ODR", "ODR-RDR Transition", "RDR"],
-            key="adr_high_filter"
+        breakout3_time_filter = st.selectbox(
+            "3rd Breakout Time",
+            options=["All"] + sessions,
+            key="breakout3_time_filter"
         )
     with row1_cols[3]:
-        adr_transition_high_filter = st.selectbox(
-            "ADR-ODR Transition High Touch",
-            options=["All"] + ["ODR", "ODR-RDR Transition", "RDR"],
-            key="adr_odr_transition_high_filter"
+        breakout4_time_filter = st.selectbox(
+            "4th Breakout Time",
+            options=["All"] + sessions,
+            key="breakout4_time_filter"
         )
     with row1_cols[4]:
-        odr_high_filter = st.selectbox(
-            "ODR High Touch",
-            options=["All"] + ["ODR-RDR Transition", "RDR"],
-            key="odr_high_filter"
+        breakout5_time_filter = st.selectbox(
+            "5th Breakout Time",
+            options=["All"] + sessions,
+            key="breakout5_time_filter"
         )
     with row1_cols[5]:
-        odr_transition_high_filter = st.selectbox(
-            "ODR-RDR Transition High Touch",
-            options=["All"] + ["RDR"],
-            key="odr_rdr_transition_high_filter"
-        )
-
-    # Second Row
-    with row2_cols[0]:
-        prev_rdr_low_filter = st.selectbox(
-            "PRDR Low Touch",
-            options=["All"] + ["Daily Open-ADR Transition", "ADR", "ADR-ODR Transition", "ODR", "ODR-RDR Transition", "RDR"],
-            key="prdr_low_filter"
-        )
-    with row2_cols[1]:
-        pre_adr_low_filter = st.selectbox(
-            "Daily Open-ADR Transition Low Touch",
-            options=["All"] + ["ADR", "ADR-ODR Transition", "ODR", "ODR-RDR Transition", "RDR"],
-            key="prdr_adr_transition_low_filter"
-        )
-    with row2_cols[2]:
-        adr_low_filter = st.selectbox(
-            "ADR Low Touch",
-            options=["All"] + ["ADR-ODR Transition", "ODR", "ODR-RDR Transition", "RDR"],
-            key="adr_low_filter"
-        )
-    with row2_cols[3]:
-        adr_transition_low_filter = st.selectbox(
-            "ADR-ODR Transition Low Touch",
-            options=["All"] + ["ODR", "ODR-RDR Transition", "RDR"],
-            key="adr_odr_transition_low_filter"
-        )
-    with row2_cols[4]:
-        odr_low_filter = st.selectbox(
-            "ODR Low Touch",
-            options=["All"] + ["ODR-RDR Transition", "RDR"],
-            key="odr_low_filter"
-        )
-    with row2_cols[5]:
-        odr_transition_low_filter = st.selectbox(
-            "ODR-RDR Transition Low Touch",
-            options=["All"] + ["RDR"],
-            key="odr_rdr_transition_low_filter"
+        breakout6_time_filter = st.selectbox(
+            "6th Breakout Time",
+            options=["All"] + sessions,
+            key="breakout6_time_filter"
         )
 
 #########################################
@@ -248,72 +205,9 @@ with st.expander("Session High / Low Inclusions", expanded=False):
 
 # map each filter to its column
 inclusion_map = {
-    "prev_rdr_high_touch_time_bucket":       "prdr_high_filter",
-    "pre_adr_high_touch_time_bucket":        "prdr_adr_transition_high_filter",
-    "adr_high_touch_time_bucket":            "adr_high_filter",
-    "adr_transition_high_touch_time_bucket": "adr_odr_transition_high_filter",
-    "odr_high_touch_time_bucket":            "odr_high_filter",
-    "odr_transition_high_touch_time_bucket": "odr_rdr_transition_high_filter",
 
-    "prev_rdr_low_touch_time_bucket":        "prdr_low_filter",
-    "pre_adr_low_touch_time_bucket":         "prdr_adr_transition_low_filter",
-    "adr_low_touch_time_bucket":             "adr_low_filter",
-    "adr_transition_low_touch_time_bucket":  "adr_odr_transition_low_filter",
-    "odr_low_touch_time_bucket":             "odr_low_filter",
-    "odr_transition_low_touch_time_bucket":  "odr_rdr_transition_low_filter",
-
-    "prev_rdr_idr_midline_touch_time_bucket":   "prdr_mid_hit_filter",
-    "adr_idr_midline_touch_time_bucket":       "adr_mid_hit_filter",
-    "odr_idr_midline_touch_time_bucket":       "odr_mid_hit_filter",
-
-    "prev_rdr_to_adr_model" : "prdr_to_adr_model_filter",
-    "adr_to_odr_model" : "adr_to_odr_model_filter",
-    "adr_to_rdr_model" : "adr_to_rdr_model_filter",
-    "odr_to_rdr_model" : "odr_to_rdr_model_filter",
-
-    "adr_open_to_1800_open" : "adr_open_to_1800_open_filter",
-    "odr_open_to_1800_open" : "odr_open_to_1800_open_filter",
-    "rdr_open_to_1800_open" : "rdr_open_to_1800_open_filter",
-
-    "adr_open_to_prev_1555_close" : "adr_open_to_prdr_1555_close_filter",
-    "odr_open_to_prev_1555_close" : "odr_open_to_prdr_1555_close_filter",
-    "rdr_open_to_prev_1555_close" : "rdr_open_to_prdr_1555_close_filter",
-
-    "prev_rdr_box_color" : "prdr_box_color_filter",
-    "adr_box_color" : "adr_box_color_filter",
-    "odr_box_color" : "odr_box_color_filter",
-    "rdr_box_color" : "rdr_box_color_filter",
-
-    "prev_rdr_conf_direction" : "prdr_conf_direction_filter",
-    "adr_conf_direction" : "adr_conf_direction_filter",
-    "odr_conf_direction" : "odr_conf_direction_filter",
-    "rdr_conf_direction" : "rdr_conf_direction_filter",
-
-    "prev_rdr_conf_valid" : "prdr_conf_valid_filter",
-    "adr_conf_valid" : "adr_conf_valid_filter",
-    "odr_conf_valid" : "odr_conf_valid_filter",
-    "rdr_conf_valid" : "rdr_conf_valid_filter",
 }
 
-exclusion_map = {
-    "prev_rdr_high_touch_time_bucket":       "prdr_high_filter_exclusion",
-    "pre_adr_high_touch_time_bucket":        "prdr_adr_transition_high_filter_exclusion",
-    "adr_high_touch_time_bucket":            "adr_high_filter_exclusion",
-    "adr_transition_high_touch_time_bucket": "adr_odr_transition_high_filter_exclusion",
-    "odr_high_touch_time_bucket":            "odr_high_filter_exclusion",
-    "odr_transition_high_touch_time_bucket": "odr_rdr_transition_high_filter_exclusion",
-
-    "prev_rdr_low_touch_time_bucket":        "prdr_low_filter_exclusion",
-    "pre_adr_low_touch_time_bucket":         "prdr_adr_transition_low_filter_exclusion",
-    "adr_low_touch_time_bucket":             "adr_low_filter_exclusion",
-    "adr_transition_low_touch_time_bucket":  "adr_odr_transition_low_filter_exclusion",
-    "odr_low_touch_time_bucket":             "odr_low_filter_exclusion",
-    "odr_transition_low_touch_time_bucket":  "odr_rdr_transition_low_filter_exclusion",
-
-    "prev_rdr_idr_midline_touch_time_bucket":       "prdr_mid_hit_filter_exclusion",
-    "adr_idr_midline_touch_time_bucket":            "adr_mid_hit_filter_exclusion",
-    "odr_idr_midline_touch_time_bucket":            "odr_mid_hit_filter_exclusion",
-}
 
 
 # Apply filters
@@ -339,21 +233,8 @@ for col, state_key in inclusion_map.items():
         if sel != "All":
             df_filtered = df_filtered[df_filtered[col] == sel]
 
-#for col, state_key in exclusion_map.items():
-    #excludes = st.session_state[state_key]
-    #if excludes:
-        #df_filtered = df_filtered[~df_filtered[col].isin(excludes)]
-
-for col, state_key in exclusion_map.items():
-    sel = st.session_state[state_key]   # now either "None" or a segment string
-    if sel != "None":
-        # build the full cascade from start up through 'sel'
-        idx = segment_order.index(sel)
-        to_exclude = set(segment_order[: idx+1])
-        df_filtered = df_filtered[~df_filtered[col].isin(to_exclude)]
-
 #########################################################
-### 18:00 Hits
+### Breakout Time Distributions
 #########################################################
 open_1800_cols = [
     "open_1800_adr_touch_time_buckets_v2",

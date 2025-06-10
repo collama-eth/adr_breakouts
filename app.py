@@ -92,7 +92,7 @@ selected_instrument = st.sidebar.selectbox("Instrument", instrument_options)
 df = load_data_for_instrument(selected_instrument)
 breakout_time_cols = [col for col in df.columns if col.startswith('breakout_time')]
 
-df['date'] = pd.to_datetime(df['session_date']).dt.date
+df['date'] = pd.to_datetime(df['date']).dt.date
 df = bucket_times(df, breakout_time_cols)
 
 st.write(len(df))

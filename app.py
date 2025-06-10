@@ -156,7 +156,7 @@ st.markdown("### Dropdown Filters")
 
 
 #########################################
-### Session HoS / LoS Filters Inclusions
+### Breakout Times
 #########################################
 
 sessions = ['ADR', 'ADR Transition', 'ODR', 'ODR Transition', 'RDR']

@@ -161,44 +161,44 @@ st.markdown("### Dropdown Filters")
 
 sessions = ['ADR', 'ADR Transition', 'ODR', 'ODR Transition', 'RDR']
 
-with st.expander("Breakout Fitlers", expanded=True):
+with st.expander("Breakout Filters", expanded=True):
     row1_cols = st.columns([1, 1, 1, 1, 1, 1])
     row2_cols = st.columns([1, 1, 1, 1, 1, 1])
     
     with row1_cols[0]:
         breakout1_time_filter = st.selectbox(
             "1st Breakout Time",
-            options=["All"] + sessions,
+            options=["None"] + sessions,
             key="breakout1_time_filter"
         )
     with row1_cols[1]:
         breakout2_time_filter = st.selectbox(
             "2nd Breakout Time",
-            options=["All"] + sessions,
+            options=["None"] + sessions,
             key="breakout2_time_filter"
         )
     with row1_cols[2]:
         breakout3_time_filter = st.selectbox(
             "3rd Breakout Time",
-            options=["All"] + sessions,
+            options=["None"] + sessions,
             key="breakout3_time_filter"
         )
     with row1_cols[3]:
         breakout4_time_filter = st.selectbox(
             "4th Breakout Time",
-            options=["All"] + sessions,
+            options=["None"] + sessions,
             key="breakout4_time_filter"
         )
     with row1_cols[4]:
         breakout5_time_filter = st.selectbox(
             "5th Breakout Time",
-            options=["All"] + sessions,
+            options=["None"] + sessions,
             key="breakout5_time_filter"
         )
     with row1_cols[5]:
         breakout6_time_filter = st.selectbox(
             "6th Breakout Time",
-            options=["All"] + sessions,
+            options=["None"] + sessions,
             key="breakout6_time_filter"
         )
 
@@ -208,7 +208,12 @@ with st.expander("Breakout Fitlers", expanded=True):
 
 # map each filter to its column
 inclusion_map = {
-
+    "breakout_time1":        "breakout_time1_filter",
+    "breakout_time2":        "breakout_time2_filter",
+    "breakout_time3":        "breakout_time3_filter",
+    "breakout_time4":        "breakout_time4_filter",
+    "breakout_time5":        "breakout_time5_filter",
+    "breakout_time6":        "breakout_time6_filter",
 }
 
 
@@ -233,7 +238,7 @@ for col, state_key in inclusion_map.items():
         if sel:  # non-empty list means “only these”
             df_filtered = df_filtered[df_filtered[col].isin(sel)]
     else:
-        if sel != "All":
+        if sel != "None":
             df_filtered = df_filtered[df_filtered[col] == sel]
 
 #########################################################

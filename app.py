@@ -157,7 +157,7 @@ st.markdown("### Dropdown Filters")
 ### Breakout Times
 #########################################
 
-sessions = ['ADR', 'ADR Transition', 'ODR', 'ODR Transition', 'RDR']
+sessions = ['ADR', 'ADR-ODR Transition', 'ODR', 'ODR-RDR Transition', 'RDR']
 
 with st.expander("Breakout Filters", expanded=True):
     row1_cols = st.columns([1, 1, 1, 1, 1, 1])
@@ -213,7 +213,6 @@ inclusion_map = {
     "breakout_time5":        "breakout5_time_filter",
     "breakout_time6":        "breakout6_time_filter",
 }
-
 
 
 # Apply filters

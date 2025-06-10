@@ -276,7 +276,7 @@ for idx, time_col in enumerate(breakout_time_cols):
     df_plot.columns = ['segment', 'percentage']
     df_plot['text'] = df_plot['percentage'].map(lambda v: f"{v:.1f}%")
 
-    # Use "Breakout {n}" as the title
+    # Use "Breakout {n}" as the title 
     fig = px.bar(
         df_plot,
         x='segment',

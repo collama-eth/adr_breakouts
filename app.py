@@ -250,7 +250,7 @@ breakout_time_cols = [
     "breakout_time3",
     "breakout_time4",
     "breakout_time5",
-    "breakout_time6',
+    "breakout_time6",
 ]
 
 breakout_time_row = st.columns(len(breakout_time_cols))

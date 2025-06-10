@@ -10,33 +10,6 @@ st.set_page_config(layout='wide')
 #########################################
 ### Functions
 #########################################
-def bucket_times(df: pd.DataFrame, time_cols: list) -> pd.DataFrame:
-    df = df.copy()
-
-    def _segment_for_timestamp(ts):
-        if pd.isna(ts):
-            return None
-        # ensure it's a Timestamp
-        t = ts.time() if isinstance(ts, pd.Timestamp) else pd.to_datetime(ts).time()
-        if time(19, 30) <= t <= time(23, 55):
-            return 'adr'
-        if time(0, 0) <= t < time(2, 0):
-            return 'adr'
-        if time(2, 0) <= t < time(3, 0):
-            return 'adr_transition'
-        if time(3, 0) <= t < time(8, 30):
-            return 'odr'
-        if time(8, 30) <= t < time(9, 30):
-            return 'odr_transition'
-        if time(9, 30) <= t < time(16, 00):
-            return 'rdr'
-        return None
-
-    for i, col in enumerate(time_cols, start=1):
-        seg_col = f'breakout_segment{i}'
-        df[seg_col] = df[col].apply(_segment_for_timestamp)
-
-    return df
 
 def load_data_for_instrument(instrument):
     df = pd.read_csv(f"https://raw.githubusercontent.com/TuckerArrants/adr_breakouts/refs/heads/main/{instrument}_ADR_Breakouts_From_2008.csv")
@@ -90,10 +63,8 @@ selected_instrument = st.sidebar.selectbox("Instrument", instrument_options)
 ### Data Loading and Processing
 #########################################
 df = load_data_for_instrument(selected_instrument)
-breakout_time_cols = [col for col in df.columns if col.startswith('breakout_time')]
 
 df['date'] = pd.to_datetime(df['date']).dt.date
-df = bucket_times(df, breakout_time_cols)
 
 rename_map = {
               'adr' : 'ADR',

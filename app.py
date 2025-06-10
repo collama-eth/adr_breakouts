@@ -106,6 +106,13 @@ start_date, end_date = st.sidebar.date_input(
 default_filters = {
     "selected_day":                       "All",
     "date_range":                 (min_date, max_date),
+    "breakout1_time_filter":      "None",
+    "breakout2_time_filter":      "None",
+    "breakout3_time_filter":      "None",
+    "breakout4_time_filter":      "None",
+    "breakout5_time_filter":      "None",
+    "breakout6_time_filter":      "None",
+
 }
 
 # 2) Reset button with callback

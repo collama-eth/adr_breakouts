@@ -24,9 +24,9 @@ def bucket_times(df: pd.DataFrame, time_cols: list) -> pd.DataFrame:
             return 'adr'
         if time(2, 0) <= t < time(3, 0):
             return 'adr_transition'
-        if time(3, 0) <= t < time(8, 0):
+        if time(3, 0) <= t < time(8, 30):
             return 'odr'
-        if time(8, 0) <= t < time(9, 30):
+        if time(8, 30) <= t < time(9, 30):
             return 'rdr_transition'
         if time(9, 30) <= t < time(16, 00):
             return 'rdr'

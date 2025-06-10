@@ -294,12 +294,12 @@ for idx, time_col in enumerate(breakout_time_cols):
 
 # ── Overall # of Breakouts Distribution ────────────────────────────────────────
 MAX_N_BREAKOUTS=10
-dir_cols      = [f'breakout_direction{i}' for i in range(1, MAX_N_BREAKOUTS)]
+dir_cols      = [f'breakout_direction{i}' for i in range(1, MAX_N_BREAKOUTS+1)]
 counts_per_day = df_filtered[dir_cols].notnull().sum(axis=1)
 
 # 2) Build a Series indexed 0..MAX_N_BREAKOUTS with counts of days
 freq = counts_per_day.value_counts().sort_index()
-freq = freq.reindex(range(MAX_N_BREAKOUTS), fill_value=0)  # ensures 0 through 6 are present
+freq = freq.reindex(range(MAX_N_BREAKOUTS+1), fill_value=0)  # ensures 0 through 6 are present
 
 # 3) Turn into a DataFrame
 df_dist = freq.rename_axis('num_breakouts').reset_index(name='days')

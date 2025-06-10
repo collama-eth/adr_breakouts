@@ -39,7 +39,7 @@ def bucket_times(df: pd.DataFrame, time_cols: list) -> pd.DataFrame:
     return df
 
 def load_data_for_instrument(instrument):
-    df = pd.read_csv(f"https://raw.githubusercontent.com/TuckerArrants/adr_breakouts/refs/heads/main/{INSTRUMENT}_ADR_Breakouts_From_2008.csv")
+    df = pd.read_csv(f"https://raw.githubusercontent.com/TuckerArrants/adr_breakouts/refs/heads/main/{instrument}_ADR_Breakouts_From_2008.csv")
     return df
 
 # ✅ Store username-password pairs
@@ -94,6 +94,8 @@ breakout_time_cols = [col for col in df.columns if col.startswith('breakout_time
 
 df['date'] = pd.to_datetime(df['session_date']).dt.date
 df = bucket_times(df, breakout_time_cols)
+
+st.write(len(df))
 
 rename_map = {
               'adr' : 'ADR',

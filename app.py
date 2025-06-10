@@ -244,34 +244,22 @@ for col, state_key in inclusion_map.items():
 #########################################################
 ### Breakout Time Distributions
 #########################################################
-open_1800_cols = [
-    "open_1800_adr_touch_time_buckets_v2",
-    "open_1800_odr_touch_time_buckets_v2",
-    "open_1800_rdr_touch_time_buckets_v2",
-]
-open_1800_titles = [
-    "18:00 Open Hit in ADR",
-    "18:00 Open Hit in ODR",
-    "18:00 Open Hit in RDR"
-]
-prdr_gap_cols = [
-    "prev_close_1555_adr_touch_time_buckets_v2",
-    "prev_close_1555_odr_touch_time_buckets_v2",
-    "prev_close_1555_rdr_touch_time_buckets_v2",
-]
-prdr_gap_titles = [
-    "Prev. Day Gap Close in ADR",
-    "Prev. Day Gap Close in ODR",
-    "Prev. Day Gap Close in RDR"
+breakout_time_cols = [
+    "breakout_time1",
+    "breakout_time2",
+    "breakout_time3",
+    "breakout_time4",
+    "breakout_time5",
+    "breakout_time6',
 ]
 
-open_1800_and_gap_row = st.columns(len(open_1800_cols) + len(prdr_gap_cols))
+breakout_time_row = st.columns(len(breakout_time_cols))
 
-order = ["Box Formation", "Before Confirmation", "After Confirmation", "Untouched"]
+order = ["ADR", "ADR Transition", "ODR", "ODR Transition", "RDR"]
 
-for idx, col in enumerate(open_1800_cols):
+for idx, col in enumerate(breakout_time_cols):
     # 1) drop any actual None/NaT values
-    series = df_filtered[col].fillna("Untouched")
+    series = df_filtered[col]
 
     # 2) normalized counts, *then* reindex into your three‐bucket order
     counts = (
@@ -289,7 +277,7 @@ for idx, col in enumerate(open_1800_cols):
         x=perc.index,
         y=perc.values,
         text=[f"{v:.1f}%" for v in perc.values],
-        title=open_1800_titles[idx],
+        title=breakout_time_cols[idx],
         labels={"x": "", "y": ""},
     )
     fig.update_traces(textposition="outside")
@@ -298,38 +286,6 @@ for idx, col in enumerate(open_1800_cols):
         margin=dict(l=10,r=10,t=30,b=10),
         yaxis=dict(showticklabels=False))
 
-    open_1800_and_gap_row[idx].plotly_chart(fig, use_container_width=True)
-
-for idx, col in enumerate(prdr_gap_cols):
-    # 1) drop any actual None/NaN values so they never even show up
-    series = df_filtered[col].fillna("Untouched")
-
-    # 2) normalized counts, *then* reindex into your three‐bucket order
-    counts = (
-        series
-        .value_counts(normalize=True)
-        .reindex(order, fill_value=0)
-    )
-
-    # 4) turn into percentages
-    perc = counts * 100
-    perc = perc[perc > 0]
-
-    # now build the bar‐chart
-    fig = px.bar(
-        x=perc.index,
-        y=perc.values,
-        text=[f"{v:.1f}%" for v in perc.values],
-        title=prdr_gap_titles[idx],
-        labels={"x": "", "y": ""},
-    )
-    fig.update_traces(textposition="outside")
-    fig.update_layout(
-        xaxis_tickangle=90,
-        margin=dict(l=10,r=10,t=30,b=10),
-        yaxis=dict(showticklabels=False))
-
-    open_1800_and_gap_row[idx+3].plotly_chart(fig, use_container_width=True)
-
+    breakout_time_row[idx].plotly_chart(fig, use_container_width=True)
 
 st.caption(f"Sample size: {len(df_filtered):,} rows")

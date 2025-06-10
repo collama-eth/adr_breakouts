@@ -222,8 +222,8 @@ inclusion_map = {
 df_filtered = df.copy()
 
 sel_day = st.session_state["selected_day"]
-if sel_day != "All":
-    df_filtered = df_filtered[df_filtered["day_of_week"]  == sel_day]
+#if sel_day != "All":
+    #df_filtered = df_filtered[df_filtered["day_of_week"]  == sel_day]
 
 # — Date range —
 start_date, end_date = st.session_state["date_range"]

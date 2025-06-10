@@ -259,7 +259,7 @@ order = ['ADR', 'ADR-ODR Transition', 'ODR', 'ODR-RDR Transition', 'RDR']
 
 for idx, col in enumerate(breakout_time_cols):
     # 1) drop any actual None/NaT values
-    series = df_filtered[col]
+    series = df_filtered[col].fillna('No breakout')
 
     # 2) normalized counts, *then* reindex into your three‐bucket order
     counts = (

@@ -244,6 +244,8 @@ for col, state_key in inclusion_map.items():
 #########################################################
 ### Breakout Time Distributions
 #########################################################
+import plotly.express as px
+
 breakout_time_cols = [
     "breakout_time1",
     "breakout_time2",
@@ -252,40 +254,49 @@ breakout_time_cols = [
     "breakout_time5",
     "breakout_time6",
 ]
+order = [
+    "ADR",
+    "ADR-ODR Transition",
+    "ODR",
+    "ODR-RDR Transition",
+    "RDR"
+]
+rows = st.columns(len(breakout_time_cols))
 
-breakout_time_row = st.columns(len(breakout_time_cols))
+for idx, time_col in enumerate(breakout_time_cols):
+    seg_col = f"breakout_segment{idx+1}"
+    series = df_filtered[seg_col]
 
-order = ['ADR', 'ADR-ODR Transition', 'ODR', 'ODR-RDR Transition', 'RDR']
-
-for idx, col in enumerate(breakout_time_cols):
-    # 1) drop any actual None/NaT values
-    series = df_filtered[col].fillna('No breakout')
-
-    # 2) normalized counts, *then* reindex into your three‐bucket order
+    # 1) Compute normalized counts reindexed into your exact order:
     counts = (
         series
         .value_counts(normalize=True)
         .reindex(order, fill_value=0)
     )
 
-    # 4) turn into percentages
-    perc = counts * 100
-    perc = perc[perc > 0]
+    # 2) Build a DataFrame for plotting:
+    df_plot = counts.mul(100).reset_index()
+    df_plot.columns = ['segment', 'percentage']
+    # Add a text column for labels:
+    df_plot['text'] = df_plot['percentage'].map(lambda v: f"{v:.1f}%")
 
-    # now build the bar‐chart
+    # 3) Call px.bar with data_frame= and column names:
     fig = px.bar(
-        x=perc.index,
-        y=perc.values,
-        text=[f"{v:.1f}%" for v in perc.values],
-        title=breakout_time_cols[idx],
-        labels={"x": "", "y": ""},
+        df_plot,
+        x='segment',
+        y='percentage',
+        text='text',
+        title=seg_col,
+        labels={'segment': '', 'percentage': ''},
     )
     fig.update_traces(textposition="outside")
     fig.update_layout(
         xaxis_tickangle=90,
-        margin=dict(l=10,r=10,t=30,b=10),
-        yaxis=dict(showticklabels=False))
+        margin=dict(l=10, r=10, t=30, b=10),
+        yaxis=dict(showticklabels=False)
+    )
 
-    breakout_time_row[idx].plotly_chart(fig, use_container_width=True)
+    rows[idx].plotly_chart(fig, use_container_width=True)
+
 
 st.caption(f"Sample size: {len(df_filtered):,} rows")

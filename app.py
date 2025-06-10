@@ -208,12 +208,12 @@ with st.expander("Breakout Filters", expanded=True):
 
 # map each filter to its column
 inclusion_map = {
-    "breakout_time1":        "breakout_time1_filter",
-    "breakout_time2":        "breakout_time2_filter",
-    "breakout_time3":        "breakout_time3_filter",
-    "breakout_time4":        "breakout_time4_filter",
-    "breakout_time5":        "breakout_time5_filter",
-    "breakout_time6":        "breakout_time6_filter",
+    "breakout_time1":        "breakout1_time_filter",
+    "breakout_time2":        "breakout2_time_filter",
+    "breakout_time3":        "breakout3_time_filter",
+    "breakout_time4":        "breakout4_time_filter",
+    "breakout_time5":        "breakout5_time_filter",
+    "breakout_time6":        "breakout6_time_filter",
 }
 
 

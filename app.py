@@ -206,14 +206,13 @@ with st.expander("Breakout Filters", expanded=True):
 
 # map each filter to its column
 inclusion_map = {
-    "breakout_time1":        "breakout1_time_filter",
-    "breakout_time2":        "breakout2_time_filter",
-    "breakout_time3":        "breakout3_time_filter",
-    "breakout_time4":        "breakout4_time_filter",
-    "breakout_time5":        "breakout5_time_filter",
-    "breakout_time6":        "breakout6_time_filter",
+    "breakout_segment1": "breakout1_time_filter",
+    "breakout_segment2": "breakout2_time_filter",
+    "breakout_segment3": "breakout3_time_filter",
+    "breakout_segment4": "breakout4_time_filter",
+    "breakout_segment5": "breakout5_time_filter",
+    "breakout_segment6": "breakout6_time_filter",
 }
-
 
 # Apply filters
 df_filtered = df.copy()

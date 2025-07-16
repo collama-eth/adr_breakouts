@@ -19,6 +19,7 @@ def load_data_for_instrument(instrument):
 USER_CREDENTIALS = {
     "badboyz": "bangbang",
     "dreamteam" : "strike",
+    "tradelab" : "bangbang"
 }
 
 #########################################
